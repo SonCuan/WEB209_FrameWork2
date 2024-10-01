@@ -6,7 +6,8 @@
       "price": 49.99,
       "imageUrl": "http://example.com/product4.jpg",
       "available": true,
-      "description": "Description for product 4"
+      "description": "Description for product 4",
+      "category": "Electronics"
     },
     {
       "id": 5,
@@ -14,7 +15,8 @@
       "price": 59.99,
       "imageUrl": "http://example.com/product5.jpg",
       "available": false,
-      "description": "Description for product 5"
+      "description": "Description for product 5",
+      "category": "San pham 1 "
     },
     {
       "id": 6,
@@ -22,7 +24,8 @@
       "price": 69.99,
       "imageUrl": "http://example.com/product6.jpg",
       "available": true,
-      "description": "Description for product 6"
+      "description": "Description for product 6",
+      "category": "San pham 2 "
     },
     {
       "id": 7,
@@ -43,21 +46,13 @@
       "available": false
     },
     {
-      "id": 9,
-      "name": "Product 9",
-      "price": 99.99,
-      "imageUrl": "http://example.com/product9.jpg",
+      "name": "Ao khac thoi trang nam",
+      "price": "540000",
+      "imageUrl": "https://picsum.photos/200/300",
+      "description": "Phu Quoc-Da Nang",
       "available": true,
-      "description": "Description for product 9"
-    },
-    {
-      "id": 10,
-      "name": "Product 10",
-      "price": 109.99,
-      "imageUrl": "http://example.com/product10.jpg",
-      "pictureUrl": "http://example.com/product9.jpg",
-      "description": "Description for product 9",
-      "available": true
+      "category": "1",
+      "id": 10
     }
   ]
 }
