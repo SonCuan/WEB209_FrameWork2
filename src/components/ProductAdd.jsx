@@ -44,6 +44,7 @@ const ProductAdd = () => {
         onSuccess: () => {
             // Làm mới lại danh sách sản phẩm khi thêm thành công
             queryClient.invalidateQueries({ queryKey: ['products'] });
+            nav('/products');
         },
         onError: (error) => {
             console.error('Failed to add product: ', error);
@@ -54,7 +55,7 @@ const ProductAdd = () => {
     const handleAdd = (e) => {
         e.preventDefault();
         mutation.mutate(product); // Sử dụng mutation thay vì gọi API trực tiếp
-        nav('/products');
+       
     };
 
     // Hiển thị loading, error hoặc form
