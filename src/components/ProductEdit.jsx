@@ -63,7 +63,7 @@ const ProductEdit = () => {
             queryClient.invalidateQueries(['products']);
             queryClient.invalidateQueries(['product', id]);
             alert("Sua san pham thanh cong");
-            nav('/products');
+            nav('/admin/products');
         },
         onError: (error) => {
             console.log(error);

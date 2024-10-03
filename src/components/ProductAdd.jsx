@@ -42,16 +42,27 @@ const ProductAdd = () => {
             return res.data;
         },
         onSuccess: () => {
-            // Làm mới lại danh sách sản phẩm khi thêm thành công
             queryClient.invalidateQueries({ queryKey: ['products'] });
-            nav('/products');
+            nav('/admin/products');
         },
         onError: (error) => {
             console.error('Failed to add product: ', error);
         },
     });
-
-    // Hàm xử lý form submit, không thay đổi số hooks trong mỗi lần render
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProduct((prev) => ({
+                    ...prev,
+                    imageUrl: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
     const handleAdd = (e) => {
         e.preventDefault();
         mutation.mutate(product); // Sử dụng mutation thay vì gọi API trực tiếp
@@ -90,12 +101,18 @@ const ProductAdd = () => {
                 <div className="mb-3">
                     <label className="form-label">Image</label>
                     <input
-                        type="text"
+                        type="file"
                         className="form-control"
-                        name="imageUrl"
-                        value={product.imageUrl}
-                        onChange={handleChange}
+                        onChange={handleImageChange}
                     />
+                    {product.imageUrl && (
+                        <img
+                            src={product.imageUrl}
+                            width={100}
+                            height={100}
+                            style={{ marginTop: '10px' }}
+                        />
+                    )}
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Description</label>

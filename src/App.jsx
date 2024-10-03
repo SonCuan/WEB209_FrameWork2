@@ -20,9 +20,11 @@ function App() {
         <Route path="/products/edit/:id" element = {<ProductEdit />}/>
         <Route path="/login" element = {<AuthForm/>} />
         <Route path="/register" element = {<AuthForm isRegister />} /> */}
-          <Route path="/admin" element={<LayoutsAdmin />}>
+        <Route path="/admin" element={<LayoutsAdmin />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductMenaga />} />
+          <Route path="products/add" element={<ProductAdd />} />
+          <Route path="products/edit/:id" element={<ProductEdit />} />
         </Route>
       </Routes>
    
