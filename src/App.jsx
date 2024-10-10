@@ -8,6 +8,7 @@ import AuthForm from "./pages/AuthForm";
 import LayoutsAdmin from "./layouts/LayoutsAdmin";
 import ProductMenaga from "./pages/ProductMenaga";
 import Dashboard from "./pages/Dashboard";
+import ProductDetail from "./components/ProductDetail";
 function App() {
 
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="products" element={<ProductMenaga />} />
           <Route path="products/add" element={<ProductAdd />} />
           <Route path="products/edit/:id" element={<ProductEdit />} />
+          <Route path="products/detail/:id" element ={<ProductDetail />} />
         </Route>
       </Routes>
    

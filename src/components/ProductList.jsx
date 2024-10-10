@@ -80,6 +80,7 @@ const ProductList = () => {
               <td>
                 <button className="btn btn-warning w-100" onClick={() => handleEdit(item.id)}>Edit</button>
                 <button className="btn btn-danger w-100" onClick={() => mutation.mutate(item.id)}>Delete</button>
+               
               </td>
             </tr>
           ))}

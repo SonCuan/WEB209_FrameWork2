@@ -1,159 +1,120 @@
-import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React from 'react';
-import api from '../servis/axios';
-import { useNavigate } from 'react-router-dom';
+
+import { useMutation } from "@tanstack/react-query";
+import { Button, Form, Input, InputNumber, message, Select, Switch , Upload } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { PlusOutlined } from '@ant-design/icons';
 
 const ProductAdd = () => {
-    const nav = useNavigate();
-    const { isLoading, isError, data, error } = useQuery({
-        queryKey: ['products'],
-        queryFn: async () => {
-            const res = await api.get('/products');
-            return res.data;
-        },
-    });
-
-    const queryClient = useQueryClient();
-
-    // Sử dụng useState để quản lý form input
-    const [product, setProduct] = useState({
-        name: '',
-        price: '',
-        imageUrl: '',
-        description: '',
-        available: false,
-        category: '',
-    });
-
-    // Hàm handleChange không thay đổi giữa các render, nên không có vấn đề về thứ tự hook
-    const handleChange = (e) => {
-        const { name, value, checked, type } = e.target;
-        setProduct((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
-    };
-
-    // Sử dụng useMutation ở cấp cao nhất, không nằm trong điều kiện
-    const mutation = useMutation({
-        mutationFn: async (product) => {
-            const res = await api.post('/products', product);
-            return res.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['products'] });
-            nav('/admin/products');
-        },
-        onError: (error) => {
-            console.error('Failed to add product: ', error);
-        },
-    });
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProduct((prev) => ({
-                    ...prev,
-                    imageUrl: reader.result
-                }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    
-    const handleAdd = (e) => {
-        e.preventDefault();
-        mutation.mutate(product); // Sử dụng mutation thay vì gọi API trực tiếp
-       
-    };
-
-    // Hiển thị loading, error hoặc form
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error: {error.message}</div>;
-
-    return (
-        <div>
-          
-            <form onSubmit={handleAdd}>
-                <h1>Them san pham</h1>
-                <div className="mb-3">
-                    <label className="form-label">Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="name"
-                        value={product.name}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Price</label>
-                    <input
-                        type="number"
-                        className="form-control"
-                        name="price"
-                        value={product.price}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Image</label>
-                    <input
-                        type="file"
-                        className="form-control"
-                        onChange={handleImageChange}
-                    />
-                    {product.imageUrl && (
-                        <img
-                            src={product.imageUrl}
-                            width={100}
-                            height={100}
-                            style={{ marginTop: '10px' }}
-                        />
-                    )}
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Description</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="description"
-                        value={product.description}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="mb-3">
-                    <label className="form-label">Available</label>
-                    <input
-                        type="checkbox"
-                        name="available"
-                        checked={product.available}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="">Category</label>
-                    <select
-                        name="category"
-                        className="form-control"
-                        value={product.category}
-                        onChange={handleChange}
-                    >
-                        <option value="">--Category--</option>
-                        <option value="1">Danh mục 1</option>
-                        <option value="2">Danh mục 2</option>
-                    </select>
-                </div>
-                <br />
-                <button type="submit" className="btn btn-primary w-100">Submit</button>
-                {mutation.isLoading && <p>Adding product...</p>}
-                {mutation.isError && <p>Error: {mutation.error.message}</p>}
-                {mutation.isSuccess && <p>Product added successfully!</p>}
-            </form>
-        </div>
-    );
+  const navigate = useNavigate();
+  const [imageUrl , setImageUrl] = useState('');
+  const { mutate } = useMutation({
+    mutationFn: async (product) => {
+      await axios.post("http://localhost:3000/products", product);
+    },
+    onSuccess: () => {
+      message.success("Them san pham thanh cong");
+      navigate("/admin/products");
+    },
+  });
+  const onUploadChange = (info) => { 
+    if(info.file.status == "done") { 
+      setImageUrl(info.file.response.secure_url);
+      // console.log(info); hiện ra url để xem nó trả về cái gì 
+    }
+  }
+  const normFile = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+  const onFinish = (values) => {
+    mutate({...values, imageUrl });
+  };
+  return (
+    <div>
+      <h1 className="text-4xl my-8">Thêm mới sản phẩm</h1>
+      <Form
+        name="add-form"
+        labelCol={{
+          span: 4,
+        }}
+        wrapperCol={{
+          span: 14,
+        }}
+        layout="horizontal"
+        style={{
+          maxWidth: 1000,
+        }}
+        onFinish={onFinish}
+      >
+        <Form.Item
+          label="Tên sản phẩm"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập tên sản phẩm",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Giá sản phẩm"
+          name="price"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập giá sản phẩm",
+            },
+          ]}
+        >
+          <InputNumber />
+        </Form.Item>
+        <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
+          <Upload action="https://api.cloudinary.com/v1_1/dejxivptm/image/upload" listType="picture-card" 
+          onChange={onUploadChange} 
+          data={{upload_preset : 'upload_react'}}>
+            <button
+              style={{
+                border: 0,
+                background: 'none',
+              }}
+              type="button"
+            >
+              <PlusOutlined />
+              <div
+                style={{
+                  marginTop: 8,
+                }}
+              >
+                Upload
+              </div>
+            </button>
+          </Upload>
+        </Form.Item>
+        <Form.Item label="Trạng thái" name="available" initialValue={false}>
+          <Switch />
+        </Form.Item>
+        <Form.Item label="Mô tả" name="description">
+          <TextArea rows={4} />
+        </Form.Item>
+        <Form.Item label="Danh mục" name="category">
+          <Select>
+            <Select.Option value="Quan bo nam">Quan bo nam </Select.Option>
+            <Select.Option value="Ao khoac nam">Ao khoac nam</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          <Button htmlType="submit" type="primary" style={{ width: "100%" }}>Button</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
 };
 
 export default ProductAdd;
